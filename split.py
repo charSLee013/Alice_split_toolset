@@ -20,13 +20,6 @@ def sanitize_filename(filename):
 
 
 def split_wav_by_srt(srt_path, wav_path, output_folder, sample_rate, mono, use_subtitle_as_name):
-    if not os.path.exists(output_folder):
-        os.makedirs(output_folder)
-    else:
-        print(f'检测到"{output_folder}" 已存在，执行删除')
-        shutil.rmtree(output_folder)
-        os.makedirs(output_folder)
-
     mapping = []
 
     with open(srt_path, 'r', encoding='utf-8') as file:
@@ -79,10 +72,16 @@ if __name__ == "__main__":
 
     args = parser.parse_args()
 
+    if not os.path.exists(args.output_folder):
+        os.makedirs(args.output_folder)
+    else:
+        print(f'检测到"{args.output_folder}" 已存在，执行删除')
+        shutil.rmtree(args.output_folder)
+        os.makedirs(args.output_folder)
+    
     for root, dirs, files in os.walk(args.input_folder):
         for file in files:
             if file.endswith(".srt"):
                 wav_file = file.replace(".srt", ".wav")
                 if wav_file in files:
-                    split_wav_by_srt(os.path.join(root, file), os.path.join(root, wav_file), args.output_folder,
-                                     args.sample_rate, args.mono, args.use_subtitle_as_name)
+                    split_wav_by_srt(os.path.join(root, file), os.path.join(root, wav_file), args.output_folder,args.sample_rate, args.mono, args.use_subtitle_as_name)
